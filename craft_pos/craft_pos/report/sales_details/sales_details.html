@@ -1,0 +1,108 @@
+<style>
+	.print-format {
+		padding: 4mm;
+		font-size: 12pt !important;
+	}
+	.print-format td {
+		vertical-align:middle !important;
+	}
+	.print-format tr {
+		line-height: 0.1em;
+	}
+	.print-format th {
+		vertical-align:middle !important;
+		text-align: center;
+		background-color: #FFFFFF !important;
+		border-bottom: 2px solid black !important;
+	}
+	.border {
+		border-collapse: collapse;
+	}
+</style>
+
+<div class="row col-md-12" style="width:100%;">
+	<h2 class="text-center" style="margin-top:0"><strong>{%= __(report.report_name) %}</strong></h2>
+	<h4 class="text-center">
+		{%= frappe.datetime.str_to_user(filters.from_date) %} - {%= frappe.datetime.str_to_user(filters.to_date) %}
+	</h4>
+
+	{% var consolidated = data.slice(-1).pop() %}
+	<!-- {% var prod = JSON.stringify(consolidated) %} -->
+	{% var products =  consolidated["product"] %}
+	{% var payments =  consolidated["quantity"] %}
+	{% var taxes =  consolidated["price_unit"] %}
+	{% if(products) { %}
+	<div class="pull-left">
+		<h2><strong>{%= __("Products") %}</strong></h2>
+	</div>
+	<table class="table border">
+		<thead>
+			<tr>
+				<th>{%= __("Product") %}</th>
+				<th>{%= __("Quantity") %}</th>
+				<th>{%= __("Price Unit") %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for(var i=0, l=products.length; i<l; i++) { %}
+			<tr>
+				<td class="text-left">{%= products[i]["product"] %}</td>
+				<td class="text-left">{%= format_number(products[i]["quantity"], null, 2) %}</td>
+				<td class="text-left">{%= format_number(products[i]["price_unit"], null, 2) %}</td>
+			</tr>
+			{% } %}
+		</tbody>
+	</table>
+	{% } %}
+	<br>
+	{% if(payments) { %}
+	<div class="pull-left">
+		<h2><strong>{%= __("Payments") %}</strong></h2>
+	</div>
+	<table class="table border">
+		<thead>
+			<tr>
+				<th>{%= __("Name") %}</th>
+				<th>{%= __("Total") %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for(var i=0, l=payments.length; i<l; i++) { %}
+			<tr>
+				<td class="text-left" style="width:50%">{%= payments[i]["product"] %}</td>
+				<td class="text-left">{%= format_number(payments[i]["quantity"], null, 2) %}</td>
+			</tr>
+			{% } %}
+		</tbody>
+	</table>
+	{% } %}
+	<br>
+	{% if(taxes) { %}
+	<div class="pull-left">
+		<h2><strong>{%= __("Taxes") %}</strong></h2>
+	</div>
+	<table class="table border">
+		<thead>
+			<tr>
+				<th>{%= __("Name") %}</th>
+				<th>{%= __("Tax Amount") %}</th>
+				<th>{%= __("Base Amount") %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for(var i=0, l=taxes.length; i<l; i++) { %}
+			<tr>
+				<td class="text-left">{%= taxes[i]["product"] %}</td>
+				<td class="text-left">{%= format_number(taxes[i]["quantity"], null, 2) %}</td>
+				<td class="text-left">{%= format_number(taxes[i]["price_unit"], null, 2) %}</td>
+			</tr>
+			{% } %}
+		</tbody>
+	</table>
+	{% } %}
+
+	{% var total_list = data.slice(-2)[0] %}
+	{% var t = total_list["product"] %}
+	{% var total = JSON.stringify(t) %}
+	<h3><strong>{%=__("Total: ") %}{%= format_number(total, null, 2) %}</strong></h3>
+</div>
